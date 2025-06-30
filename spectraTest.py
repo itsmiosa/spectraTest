@@ -7,38 +7,42 @@ import csv
 from sklearn.metrics.pairwise import cosine_similarity
 
 # === Configuration ===
-x = 300  # Pixel X
-y = 150  # Pixel Y
+x = 390  # Pixel X
+y = 115  # Pixel Y
 hdr_path = r'C:\Users\miosa\Documents\spectralData\spectraData.hdr'
 spe_path = r'C:\Users\miosa\Documents\spectralData\spectraData.spe'
+SIMILARITY_THRESHOLD = 0.99
+
 
 # === Load the image ===
 img = envi.open(hdr_path, image=spe_path)
 spectrum = np.array(img[x, y])
 
 # === Load reference spectra from your 5 plastic CSVs ===
-def load_and_normalize(csv_path):
-    ref = pd.read_csv(csv_path)['Reflectance'].values
-    return ref / np.max(ref)
+def load_reference(csv_path):
+    return pd.read_csv(csv_path)['Reflectance'].values
 
 references = [
-    load_and_normalize(r"C:\Users\miosa\Documents\github repos\plastic1.csv"),
-    load_and_normalize(r"C:\Users\miosa\Documents\github repos\plastic2.csv"),
-    load_and_normalize(r"C:\Users\miosa\Documents\github repos\plastic3.csv"),
-    load_and_normalize(r"C:\Users\miosa\Documents\github repos\plastic4.csv"),
-    load_and_normalize(r"C:\Users\miosa\Documents\github repos\plastic5.csv")
+    load_reference(r"C:\Users\miosa\Documents\github repos\plastic1.csv"),
+    load_reference(r"C:\Users\miosa\Documents\github repos\plastic2.csv"),
+    load_reference(r"C:\Users\miosa\Documents\github repos\plastic3.csv"),
+    load_reference(r"C:\Users\miosa\Documents\github repos\plastic4.csv"),
+    load_reference(r"C:\Users\miosa\Documents\github repos\plastic5.csv")
 ]
 labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
 
-# === Normalize the unknown spectrum ===
-spectrum_norm = spectrum / np.max(spectrum)
-
 # === Classify using cosine similarity ===
 reference_matrix = np.vstack(references)
-similarities = cosine_similarity([spectrum_norm], reference_matrix)
+similarities = cosine_similarity([spectrum], reference_matrix)
 best_match = np.argmax(similarities)
-predicted_label = labels[best_match]
+best_score = similarities[0][best_match]
 
+if best_score >= SIMILARITY_THRESHOLD:
+    predicted_label = labels[best_match]
+else:
+    predicted_label = "Unknown"
+
+print(f"Similarity score: {best_score:.5f}")
 print(f"Pixel at ({x}, {y}) classified as: {predicted_label}")
 
 # === Load wavelengths from metadata ===
