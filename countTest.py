@@ -6,7 +6,7 @@ from scipy.ndimage import label
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
-# === CONFIGURATION ===
+# CONFIGURATION 
 hdr_path = r'C:\Users\miosa\Documents\spectralData\spectraData.hdr'
 spe_path = r'C:\Users\miosa\Documents\spectralData\spectraData.spe'
 reference_csv_paths = [
@@ -20,13 +20,8 @@ labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
 SIMILARITY_THRESHOLD = 0.996
 MIN_PIXELS = 100
 
-# FUNCTION TO LOAD RAW SPECTRA
-def load_reference(csv_path):
-    return pd.read_csv(csv_path)['Reflectance'].values
-
 # LOAD REFERENCES
-references = [load_reference(path) for path in reference_csv_paths]
-reference_matrix = np.vstack(references)
+reference_matrix = np.load(r"C:\Users\miosa\Documents\github repos\reference_matrix.npy")
 
 # LOAD IMAGE
 img = envi.open(hdr_path, image=spe_path)
@@ -37,8 +32,10 @@ label_map = np.full((height, width), "Unknown", dtype=object)
 
 # CLASSIFY EACH PIXEL
 for x in range(height):
+    if x % 50 == 0:
+        print(f"Classifying row {x}/{height}")
     for y in range(width):
-        spectrum = np.array(img[x, y])
+        spectrum = img[x, y]
         similarities = cosine_similarity([spectrum], reference_matrix)
         best_match = np.argmax(similarities)
         best_score = similarities[0][best_match]

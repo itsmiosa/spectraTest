@@ -6,7 +6,7 @@ import pandas as pd
 import csv
 from sklearn.metrics.pairwise import cosine_similarity
 
-# === Configuration ===
+# Configuration
 x = 240  # Pixel X
 y = 270  # Pixel Y
 hdr_path = r'C:\Users\miosa\Documents\spectralData\spectraData.hdr'
@@ -14,11 +14,11 @@ spe_path = r'C:\Users\miosa\Documents\spectralData\spectraData.spe'
 SIMILARITY_THRESHOLD = 0.99
 
 
-# === Load the image ===
+# Load the image
 img = envi.open(hdr_path, image=spe_path)
 spectrum = np.array(img[x, y])
 
-# === Load reference spectra from your 5 plastic CSVs ===
+# Load reference spectra from your 5 plastic CSVs
 def load_reference(csv_path):
     return pd.read_csv(csv_path)['Reflectance'].values
 
@@ -31,7 +31,7 @@ references = [
 ]
 labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
 
-# === Classify using cosine similarity ===
+# Classify using cosine similarity
 reference_matrix = np.vstack(references)
 similarities = cosine_similarity([spectrum], reference_matrix)
 best_match = np.argmax(similarities)
@@ -45,7 +45,7 @@ else:
 print(f"Similarity score: {best_score:.5f}")
 print(f"Pixel at ({x}, {y}) classified as: {predicted_label}")
 
-# === Load wavelengths from metadata ===
+# Load wavelengths from metadata
 wavelengths = img.metadata.get("wavelength")
 wavelengths = np.array([float(w) for w in wavelengths]) if wavelengths else np.arange(len(spectrum))
 
@@ -63,7 +63,7 @@ with open(filename, mode='w', newline='') as file:
 print(f"Spectrum saved as: {filename}")
 '''
 
-# === Plot the spectrum ===
+# Plot the spectrum
 plt.figure(figsize=(10, 5))
 plt.plot(wavelengths, spectrum, label='Unknown')
 plt.plot(wavelengths, references[best_match], label=f'Reference: {predicted_label}')
