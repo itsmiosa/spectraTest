@@ -7,7 +7,7 @@ import csv
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Configuration
-x = 240  # Pixel X
+x = 350  # Pixel X
 y = 270  # Pixel Y
 hdr_path = r'C:\Users\miosa\Documents\spectralData\spectraData.hdr'
 spe_path = r'C:\Users\miosa\Documents\spectralData\spectraData.spe'
