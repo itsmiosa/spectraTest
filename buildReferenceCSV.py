@@ -3,7 +3,7 @@ from spectral import envi
 import csv
 
 # Configuration
-desired_label = "PET"
+desired_label = "test"
 x = 600  # Pixel X
 y = 200  # Pixel Y
 hdr_path = r'C:\Users\miosa\Documents\spectralData\spectraData.hdr'
