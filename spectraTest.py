@@ -12,7 +12,7 @@ y = 270  # Pixel Y
 hdr_path = r'C:\Users\miosa\Documents\spectralData\spectraData.hdr'
 spe_path = r'C:\Users\miosa\Documents\spectralData\spectraData.spe'
 SIMILARITY_THRESHOLD = 0.99
-
+labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
 
 # Load the image
 img = envi.open(hdr_path, image=spe_path)
@@ -22,17 +22,8 @@ spectrum = np.array(img[x, y])
 def load_reference(csv_path):
     return pd.read_csv(csv_path)['Reflectance'].values
 
-references = [
-    load_reference(r"C:\Users\miosa\Documents\github repos\plastic1.csv"),
-    load_reference(r"C:\Users\miosa\Documents\github repos\plastic2.csv"),
-    load_reference(r"C:\Users\miosa\Documents\github repos\plastic3.csv"),
-    load_reference(r"C:\Users\miosa\Documents\github repos\plastic4.csv"),
-    load_reference(r"C:\Users\miosa\Documents\github repos\plastic5.csv")
-]
-labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
-
 # Classify using cosine similarity
-reference_matrix = np.vstack(references)
+reference_matrix = np.load(r"C:\Users\miosa\Documents\github repos\reference_matrix.npy")
 similarities = cosine_similarity([spectrum], reference_matrix)
 best_match = np.argmax(similarities)
 best_score = similarities[0][best_match]
@@ -44,6 +35,9 @@ else:
 
 print(f"Similarity score: {best_score:.5f}")
 print(f"Pixel at ({x}, {y}) classified as: {predicted_label}")
+
+print(best_match)
+print(best_score)
 
 # Load wavelengths from metadata
 wavelengths = img.metadata.get("wavelength")
@@ -66,7 +60,7 @@ print(f"Spectrum saved as: {filename}")
 # Plot the spectrum
 plt.figure(figsize=(10, 5))
 plt.plot(wavelengths, spectrum, label='Unknown')
-plt.plot(wavelengths, references[best_match], label=f'Reference: {predicted_label}')
+plt.plot(wavelengths, reference_matrix[best_match], label=f'Reference: {predicted_label}')
 plt.title(f"Spectrum at ({x}, {y}) - Classified as {predicted_label}")
 plt.xlabel("Wavelength (nm)")
 plt.ylabel("Reflectance")

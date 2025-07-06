@@ -8,13 +8,6 @@ from matplotlib.colors import ListedColormap
 # CONFIGURATION 
 hdr_path = r'C:\Users\miosa\Documents\spectralData\spectraData.hdr'
 spe_path = r'C:\Users\miosa\Documents\spectralData\spectraData.spe'
-reference_csv_paths = [
-    r"C:\Users\miosa\Documents\github repos\plastic1.csv",
-    r"C:\Users\miosa\Documents\github repos\plastic2.csv",
-    r"C:\Users\miosa\Documents\github repos\plastic3.csv",
-    r"C:\Users\miosa\Documents\github repos\plastic4.csv",
-    r"C:\Users\miosa\Documents\github repos\plastic5.csv"
-]
 labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
 SIMILARITY_THRESHOLD = 0.996
 MIN_PIXELS = 100
