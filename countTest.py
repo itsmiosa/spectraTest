@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from spectral import envi
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.ndimage import label
