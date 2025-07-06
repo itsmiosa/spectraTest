@@ -7,22 +7,20 @@ import csv
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Configuration
-x = 350  # Pixel X
-y = 270  # Pixel Y
+x = 600  # Pixel X
+y = 200  # Pixel Y
 hdr_path = r'C:\Users\miosa\Documents\spectralData\spectraData.hdr'
 spe_path = r'C:\Users\miosa\Documents\spectralData\spectraData.spe'
 SIMILARITY_THRESHOLD = 0.99
-#labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
 
 # Load the image
 img = envi.open(hdr_path, image=spe_path)
 spectrum = np.array(img[x, y])
 
 # Load reference matrix and labels from .npz file
-data = np.load(r"C:\Users\miosa\Documents\github repos\reference_matrix.npz", allow_pickle=True)
-reference_matrix = data["ref_matrix"]
+data = np.load(r"C:\Users\miosa\Documents\github repos\reference_matrix.npz")
+reference_matrix = data["reference_matrix"]
 labels = data["labels"]
-print("Loaded reference matrix with shape:", )
 
 # Classify using cosine similarity
 similarities = cosine_similarity([spectrum], reference_matrix)

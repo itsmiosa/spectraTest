@@ -10,11 +10,11 @@ csv_paths = [
 ]
 
 labels = [
-    "plastic1",
-    "plastic2",
-    "plastic3",
-    "plastic4",
-    "plastic5"
+    "Plastic 1",
+    "Plastic 2",
+    "Plastic 3",
+    "Plastic 4",
+    "Plastic 5"
 ]
 
 # Load and stack
@@ -22,4 +22,4 @@ refs = [pd.read_csv(p)['Reflectance'].values for p in csv_paths]
 ref_matrix = np.vstack(refs)
 
 # Save both matrix and labels in a single file
-np.savez("reference_matrix.npz", ref_matrix=ref_matrix, labels=np.array(labels))
+np.savez("reference_matrix.npz", reference_matrix=ref_matrix, labels=np.array(labels))

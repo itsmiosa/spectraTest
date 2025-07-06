@@ -8,12 +8,14 @@ from matplotlib.colors import ListedColormap
 # CONFIGURATION 
 hdr_path = r'C:\Users\miosa\Documents\spectralData\spectraData.hdr'
 spe_path = r'C:\Users\miosa\Documents\spectralData\spectraData.spe'
-labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
+#labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
 SIMILARITY_THRESHOLD = 0.996
 MIN_PIXELS = 100
 
 # LOAD REFERENCES
-reference_matrix = np.load(r"C:\Users\miosa\Documents\github repos\reference_matrix.npy")
+data = np.load(r"C:\Users\miosa\Documents\github repos\reference_matrix.npz")
+reference_matrix = data["reference_matrix"]
+labels = data["labels"]
 
 # LOAD IMAGE
 img = envi.open(hdr_path, image=spe_path)
