@@ -12,18 +12,19 @@ y = 270  # Pixel Y
 hdr_path = r'C:\Users\miosa\Documents\spectralData\spectraData.hdr'
 spe_path = r'C:\Users\miosa\Documents\spectralData\spectraData.spe'
 SIMILARITY_THRESHOLD = 0.99
-labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
+#labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
 
 # Load the image
 img = envi.open(hdr_path, image=spe_path)
 spectrum = np.array(img[x, y])
 
-# Load reference spectra from your 5 plastic CSVs
-def load_reference(csv_path):
-    return pd.read_csv(csv_path)['Reflectance'].values
+# Load reference matrix and labels from .npz file
+data = np.load(r"C:\Users\miosa\Documents\github repos\reference_matrix.npz", allow_pickle=True)
+reference_matrix = data["ref_matrix"]
+labels = data["labels"]
+print("Loaded reference matrix with shape:", )
 
 # Classify using cosine similarity
-reference_matrix = np.load(r"C:\Users\miosa\Documents\github repos\reference_matrix.npy")
 similarities = cosine_similarity([spectrum], reference_matrix)
 best_match = np.argmax(similarities)
 best_score = similarities[0][best_match]
@@ -33,11 +34,8 @@ if best_score >= SIMILARITY_THRESHOLD:
 else:
     predicted_label = "Unknown"
 
-print(f"Similarity score: {best_score:.5f}")
-print(f"Pixel at ({x}, {y}) classified as: {predicted_label}")
-
-print(best_match)
-print(best_score)
+# Output the classification result
+print(f"Pixel at ({x}, {y}) classified as: {predicted_label} with a similarity score of {best_score:.5f}")
 
 # Load wavelengths from metadata
 wavelengths = img.metadata.get("wavelength")
