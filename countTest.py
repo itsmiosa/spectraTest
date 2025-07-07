@@ -77,7 +77,6 @@ cmap = ListedColormap(color_list)
 
 plt.imshow(id_map, cmap=cmap, vmin=0, vmax=5)
 plt.title("Classified Plastic Types")
-
 cbar = plt.colorbar(ticks=range(6))
 cbar.set_ticklabels(['Unknown', 'Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5'])
 plt.tight_layout()

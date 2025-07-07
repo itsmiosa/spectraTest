@@ -39,20 +39,6 @@ print(f"Pixel at ({x}, {y}) classified as: {predicted_label} with a similarity s
 wavelengths = img.metadata.get("wavelength")
 wavelengths = np.array([float(w) for w in wavelengths]) if wavelengths else np.arange(len(spectrum))
 
-'''
-# === Export spectrum to CSV with timestamp ===
-timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-filename = f"spectrum_{x}_{y}_{timestamp}_{predicted_label}.csv"
-
-with open(filename, mode='w', newline='') as file:
-    writer = csv.writer(file)
-    writer.writerow(['Wavelength (nm)', 'Reflectance'])
-    for wl, ref in zip(wavelengths, spectrum):
-        writer.writerow([wl, ref])
-
-print(f"Spectrum saved as: {filename}")
-'''
-
 # Plot the spectrum
 plt.figure(figsize=(10, 5))
 plt.plot(wavelengths, spectrum, label='Unknown')
