@@ -58,7 +58,6 @@ for class_id in range(1, 6):
     valid_objects = np.sum(sizes >= MIN_PIXELS)
     object_counts[labels[class_id - 1]] = valid_objects
 
-
 # DISPLAY COUNTS
 print("\nPlastic Object Counts:")
 for label, count in object_counts.items():
