@@ -1,16 +1,17 @@
 import numpy as np
 from spectral import envi
 from sklearn.metrics.pairwise import cosine_similarity
-from scipy.ndimage import label
+from scipy.ndimage import label as nd_label
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
+from collections import defaultdict
+import csv
 
 # CONFIGURATION 
 hdr_path = r'C:\Users\miosa\Documents\spectralData\spectraData.hdr'
 spe_path = r'C:\Users\miosa\Documents\spectralData\spectraData.spe'
-#labels = ['Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5']
 SIMILARITY_THRESHOLD = 0.996
-MIN_PIXELS = 100
+MIN_PIXELS = 50
 
 # LOAD REFERENCES
 data = np.load(r"C:\Users\miosa\Documents\github repos\reference_matrix.npz")
@@ -38,32 +39,52 @@ for x in range(height):
             predicted_label = labels[best_match]
         else:
             predicted_label = "Unknown"
-
+            
         label_map[x, y] = predicted_label
 
 # MAP LABELS TO INTEGERS
-label_to_id = {'Unknown': 0, 'Plastic 1': 1, 'Plastic 2': 2, 'Plastic 3': 3, 'Plastic 4': 4, 'Plastic 5': 5}
+label_to_id = {'Unknown': 0}
+for i, label in enumerate(labels, start=1):
+    label_to_id[label] = i
 id_map = np.vectorize(label_to_id.get)(label_map)
 
-# COUNT OBJECTS PER PLASTIC TYPE 
-object_counts = {}
-for class_id in range(1, 6):
-    binary_mask = (id_map == class_id)
-    labeled_array, num_features = label(binary_mask)
+# COUNT OBJECTS PER PLASTIC TYPE
+summary_counts = defaultdict(int)
+total_objects = 0
+object_num = 1
+csv_rows = [("Number", "Type", "Area (pixels)")]
 
-    # Count pixels per object
+print("\nDetected Plastic Objects:")
+for class_id in range(1, 6):
+    class_label = labels[class_id - 1]
+    binary_mask = (id_map == class_id)
+    labeled_array, num_features = nd_label(binary_mask)
     sizes = np.bincount(labeled_array.ravel())[1:]
 
-    # Count how many are big enough
-    valid_objects = np.sum(sizes >= MIN_PIXELS)
-    object_counts[labels[class_id - 1]] = valid_objects
+    for size in sizes:
+        if size >= MIN_PIXELS:
+            print(f"Plastic #{object_num} ({class_label}) - size: {size} pixels")
+            summary_counts[class_label] += 1
+            total_objects += 1
+            csv_rows.append((object_num, class_label, size))
+            object_num += 1
 
-# DISPLAY COUNTS
-print("\nPlastic Object Counts:")
-for label, count in object_counts.items():
-    print(f"{label}: {count}")
+# WRITE CSV
+csv_path = r"C:\Users\miosa\Documents\spectralData\plasticCountResults.csv"
+with open(csv_path, mode='w', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerows(csv_rows)
+
+print("\nSummary per Plastic Type:")
+for label in labels:
+    print(f"{label}: {summary_counts[label]} objects")
+
+print(f"\nTotal: {total_objects} plastic objects detected")
 
 
+
+# VISUALIZE THE CLASSIFICATION
+"""
 color_list = [
     "#000000",  # Unknown → Black
     "#1f77b4",  # Plastic 1 → Blue
@@ -80,3 +101,4 @@ cbar = plt.colorbar(ticks=range(6))
 cbar.set_ticklabels(['Unknown', 'Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5'])
 plt.tight_layout()
 plt.show()
+"""
