@@ -88,7 +88,7 @@ for label in labels:
 print(f"\nTotal: {total_objects} plastic objects detected")
 
 # VISUALIZE THE CLASSIFICATION
-"""color_list = [
+color_list = [
     "#000000",  # Unknown → Black
     "#1f77b4",  # Plastic 1 → Blue
     "#2ca02c",  # Plastic 2 → Green
@@ -103,4 +103,4 @@ plt.title("Classified Plastic Types")
 cbar = plt.colorbar(ticks=range(6))
 cbar.set_ticklabels(['Unknown', 'Plastic 1', 'Plastic 2', 'Plastic 3', 'Plastic 4', 'Plastic 5'])
 plt.tight_layout()
-plt.show()"""
+plt.show()
